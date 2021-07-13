@@ -3,15 +3,14 @@ require('dotenv').config()
 const { Octokit } = require('@octokit/rest');
 
 const fs = require('fs');
-const ACCESS_TOKEN = process.env.ACCESS_TOKEN
-const GITHUB_OWNER = process.env.GITHUB_OWNER
-const GITHUB_REPO = process.env.GITHUB_REPO
-const committer_author = process.env.Author
-const committer_email = process.env.Email
-const root_content = process.env.root_dir
+const github_access_token = process.env.github_access_token
+const github_owner = process.env.github_owner
+const github_repo = process.env.github_repo
+const repo_dir = process.env.repo_dir
+const admin_secret_code = process.env.admin_secret_code
 
 const octokit = new Octokit({
-  auth: ACCESS_TOKEN,
+  auth: github_access_token,
 });
 
 module.exports = async (req, res) => {
@@ -21,7 +20,8 @@ module.exports = async (req, res) => {
         const file = req.query.file
         if(file !== undefined) {
             const rawContent = await getContent('/' + file)
-            const content = Buffer.from(rawContent.content, 'base64').toString()
+            const content = readBase64(rawContent.content)
+            
             res.json({
                 body: content
             });
@@ -35,24 +35,24 @@ module.exports = async (req, res) => {
     }
 
     //Admin Middleware
-    let body = undefined
+    let parsedBody = undefined
     if(req.body) {
-        body = JSON.parse(req.body)
-        if(verifySecretCode(body.secret_code) == false)
+        parsedBody = JSON.parse(req.body)
+        if(verifySecretCode(parsedBody) == false)
             res.status(403).send({
-                msg: 'secret code not provided or wrong'
+                msg: 'secret code is not provided or wrong'
             })
     }
 
     if(req.method === 'POST' || req.method === 'PUT') {
-        const data = await postOrUpdateContent(body, req.method)
+        const data = await postOrUpdateContent(parsedBody, req.method)
         res.json(({
             body: data
         }))
     } 
 
     if(req.method === 'DELETE') {
-        const data = await deleteContent(body)
+        const data = await deleteContent(parsedBody)
         res.json(({
             body: data
         }))
@@ -60,11 +60,11 @@ module.exports = async (req, res) => {
 };
 
 const getContent = async(filename = '') => {
-  let path = root_content + filename
+  let path = repo_dir + filename
 
   const {data} = await octokit.rest.repos.getContent({
-    owner: GITHUB_OWNER, 
-    repo: GITHUB_REPO,
+    owner: github_owner, 
+    repo: github_repo,
     path: path
   });
 
@@ -75,12 +75,12 @@ const postOrUpdateContent = async(body, method) => {
     const filename = body.filename
     const originalContent = body.content
 
-    const content = Buffer.from(originalContent).toString('base64')
-    const path = root_content + '/' + filename
+    const content = writeBase64(originalContent)
+    const path = repo_dir + '/' + filename
 
     let params = {
-        owner: GITHUB_OWNER,
-        repo: GITHUB_REPO,
+        owner: github_owner, 
+        repo: github_repo,
         path: path,
         message: `new content ${filename}`,
         content: content
@@ -91,20 +91,20 @@ const postOrUpdateContent = async(body, method) => {
         params.message = `update content ${filename}`
     }
 
-    const {data} = await octokit.rest.repos.createOrUpdateFileContents(
+    const {data, error} = await octokit.rest.repos.createOrUpdateFileContents(
                         params
                     )
-
+    console.log(error)
     return data
 }
 
 const deleteContent = async(body, method) => {
     const filename = body.filename
-    const path = root_content + '/' + filename
+    const path = repo_dir + '/' + filename
 
     const {data} = await octokit.rest.repos.deleteFile({
-                        owner: GITHUB_OWNER,
-                        repo: GITHUB_REPO,
+                        owner: github_owner, 
+                        repo: github_repo,
                         path: path,
                         message: `delete content ${filename}`,
                         sha: body.sha
@@ -113,9 +113,20 @@ const deleteContent = async(body, method) => {
     return data
 }
 
-function verifySecretCode(secret_code) {
-  if(process.env.SECRET_CODE != secret_code)
+function verifySecretCode(parsedBody) {
+  if(parsedBody.secret_code == undefined)
+    return false
+
+  if(admin_secret_code != parsedBody.secret_code)
     return false
 
   return true
+}
+
+function readBase64(str) {
+    return Buffer.from(str, 'base64').toString()
+}
+
+function writeBase64(str) {
+    return Buffer.from(str).toString('base64')
 }

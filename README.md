@@ -5,14 +5,14 @@ This Nodejs Syntax using [vercel's serverless function](https://vercel.com/docs/
 
 
 ## Use Case
-It's a headless CRUD for your content in a repository  
+It's a headless CRUD API for your content in a repository  
 
 Use case:  
 You want to manage your files through your custom "Admin" UI.
 
 But setting up Auth(register/login) on a simple app for just one user (you as an admin) is just too much.  
 
-This code will protect sensitive route by using .env params that only we know (like your password). It's located in .env[secred_code=]
+This code will protect sensitive route by using .env params that only we know (like your password). It's located in .env[admin_secret_code=]
 
 ## Set Up
 Copy paste .env.example to .env  
