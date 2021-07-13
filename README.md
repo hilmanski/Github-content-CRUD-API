@@ -39,4 +39,5 @@ params: filename, sha(original file)
 
 ## Todo/Plan
 - [X] CRUD API
+- [ ] Password .env protected
 - [ ] Validation
