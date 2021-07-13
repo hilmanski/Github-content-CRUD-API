@@ -16,8 +16,6 @@ const octokit = new Octokit({
 
 module.exports = async (req, res) => {
 
-    //0. TODO: .env password protection here
-
     if(req.method === 'GET') {
         //Single Content
         const file = req.query.file
@@ -36,15 +34,25 @@ module.exports = async (req, res) => {
         });
     }
 
+    //Admin Middleware
+    let body = undefined
+    if(req.body) {
+        body = JSON.parse(req.body)
+        if(verifySecretCode(body.secret_code) == false)
+            res.status(403).send({
+                msg: 'secret code not provided or wrong'
+            })
+    }
+
     if(req.method === 'POST' || req.method === 'PUT') {
-        const data = await postOrUpdateContent(req.body, req.method)
+        const data = await postOrUpdateContent(body, req.method)
         res.json(({
             body: data
         }))
     } 
 
     if(req.method === 'DELETE') {
-        const data = await deleteContent(req.body)
+        const data = await deleteContent(body)
         res.json(({
             body: data
         }))
@@ -63,8 +71,7 @@ const getContent = async(filename = '') => {
   return data
 }
 
-const postOrUpdateContent = async(rawBody, method) => {
-    const body = JSON.parse(rawBody)
+const postOrUpdateContent = async(body, method) => {
     const filename = body.filename
     const originalContent = body.content
 
@@ -91,8 +98,7 @@ const postOrUpdateContent = async(rawBody, method) => {
     return data
 }
 
-const deleteContent = async(rawBody, method) => {
-    const body = JSON.parse(rawBody)
+const deleteContent = async(body, method) => {
     const filename = body.filename
     const path = root_content + '/' + filename
 
@@ -105,4 +111,11 @@ const deleteContent = async(rawBody, method) => {
                     })
 
     return data
+}
+
+function verifySecretCode(secret_code) {
+  if(process.env.SECRET_CODE != secret_code)
+    return false
+
+  return true
 }

@@ -24,20 +24,20 @@ GET: http://localhost:3000/api/repo?file=your-file.md
 
 POST: http://localhost:3000/api/repo  
 ```
-params: filename, content
+params: filename, content, secret_code
 ```
 
 PUT: http://localhost:3000/api/repo  
 ```
-params: filename, content, sha(original file)
+params: filename, content, sha(original file), secret_code
 ```
 
 DELETE: http://localhost:3000/api/repo  
 ```
-params: filename, sha(original file)
+params: filename, sha(original file), secret_code
 ```
 
 ## Todo/Plan
 - [X] CRUD API
-- [ ] Password .env protected
+- [X] Password .env protected
 - [ ] Validation
