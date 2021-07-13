@@ -8,9 +8,9 @@ This Nodejs Syntax using [vercel's serverless function](https://vercel.com/docs/
 It's a headless CRUD for your content in a repository  
 
 Use case:  
-you want to manage your files through your custom "Admin" UI.
+You want to manage your files through your custom "Admin" UI.
 But setting up Auth(register/login) on a simple app for just one user (you as an admin) is just too much.  
-By using netlify or Vercel in this case, we can protect our site, with using .env params that only we know (like your password) and have a CRUD API for our repo contents.
+This code will protect sensitive route by using .env params that only we know (like your password). It's located in .env[secred_code=]
 
 ## Set Up
 Copy pas .env.example to .env  
