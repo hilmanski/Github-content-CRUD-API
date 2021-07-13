@@ -9,12 +9,14 @@ It's a headless CRUD for your content in a repository
 
 Use case:  
 You want to manage your files through your custom "Admin" UI.
+
 But setting up Auth(register/login) on a simple app for just one user (you as an admin) is just too much.  
+
 This code will protect sensitive route by using .env params that only we know (like your password). It's located in .env[secred_code=]
 
 ## Set Up
-Copy pas .env.example to .env  
-Host it on Vercel
+Copy paste .env.example to .env  
+Host it on Vercel (Since it's using vercel's function syntax, you can tweak it based on your serverless provider)
 For local server(run: vercel dev)
 
 ## API List
