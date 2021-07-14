@@ -21,14 +21,14 @@ module.exports = async (req, res) => {
             const rawContent = await getContent('/' + file)
             const content = readBase64(rawContent.content)
             
-            res.json({
+            return res.json({
                 body: content
             });
         }
 
         //All Content
         const files = await getContent()
-        res.json({
+        return res.json({
             body: files
         });
     }
@@ -38,7 +38,7 @@ module.exports = async (req, res) => {
     if(req.body) {
         parsedBody = JSON.parse(req.body)
         if(verifySecretCode(parsedBody) == false)
-            res.status(403).send({
+           return res.status(403).send({
                 msg: 'secret code is not provided or wrong'
             })
     }
@@ -47,18 +47,19 @@ module.exports = async (req, res) => {
         //all become POST req, with _method=REALMETHOD as params
     if(req.method === 'POST') {
         let method = 'POST' 
+        
         if (parsedBody._method !== undefined)
             method = parsedBody._method
 
         if(method === 'DELETE') {
             const data = await deleteContent(parsedBody)
-            res.json(({
+            return res.json(({
                 body: data
             }))
         }
 
         const data = await postOrUpdateContent(parsedBody, method)
-        res.json(({
+        return res.json(({
             body: data
         }))
     }
