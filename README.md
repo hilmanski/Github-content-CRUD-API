@@ -20,26 +20,28 @@ Host it on Vercel (Since it's using vercel's function syntax, you can tweak it b
 For local server(run: vercel dev)
 
 ## API List
+//All content lists
 GET: http://localhost:3000/api/repo  
 
+//single content 
 GET: http://localhost:3000/api/repo?file=your-file.md  
 
-//Post New  
+//New content  
 POST: http://localhost:3000/api/repo  
 ```
 params: filename, content, secret_code
 ```
+  
+//Update content  
+PUT: http://localhost:3000/api/repo  
+```
+params: filename, content, sha(original file), secret_code
+```
 
-//Update  
-POST: http://localhost:3000/api/repo  
+//Delete content
+DELETE: http://localhost:3000/api/repo  
 ```
-params: filename, content, sha(original file), secret_code, _method=PUT
-```
-
-//Delete  
-POST: http://localhost:3000/api/repo  
-```
-params: filename, sha(original file), secret_code, _method=DELETE
+params: filename, sha(original file), secret_code
 ```
 
 ## Todo/Plan

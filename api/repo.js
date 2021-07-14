@@ -40,35 +40,33 @@ module.exports = async (req, res) => {
     }
 
     //Admin Middleware
-    let parsedBody = undefined
+    let reqBody = req.body
     
-    if(req.body) {
-        parsedBody = req.body
-        if(verifySecretCode(parsedBody) == false)
+    if (reqBody) {
+        if (verifySecretCode(reqBody) == false)
            return res.status(403).send({
                 msg: 'secret code is not provided or wrong'
             })
     }
 
-    //Temp solution for CORS
-        //all become POST req, with _method=REALMETHOD as params
-    if (req.method === 'POST' || req.method === 'OPTIONS') {
-        let method = 'POST' 
-        
-        if (parsedBody._method !== undefined)
-            method = parsedBody._method
-
-        if(method === 'DELETE') {
-            const data = await deleteContent(parsedBody)
-            return res.status(200).json(({
-                body: data
-            }))
-        }
-
-        console.log(method)
-        const data = await postOrUpdateContent(parsedBody, method)
+    if (req.method === 'POST' || req.method === 'PUT') {
+        const data = await postOrUpdateContent(reqBody, req.method)
         return res.status(200).json(({
             body: data
+        }))
+    }
+
+    if (req.method === 'DELETE') {
+        const data = await deleteContent(reqBody)
+        return res.status(200).json(({
+            body: data
+        }))
+    }
+
+    //Preflight CORS handler
+    if(req.method === 'OPTIONS') {
+        return res.status(200).json(({
+            body: "OK"
         }))
     }
 }
@@ -128,11 +126,11 @@ const deleteContent = async(body, method) => {
     return data
 }
 
-function verifySecretCode(parsedBody) {
-  if(parsedBody.secret_code == undefined)
+function verifySecretCode(reqBody) {
+  if(reqBody.secret_code == undefined)
     return false
 
-  if(admin_secret_code != parsedBody.secret_code)
+  if(admin_secret_code != reqBody.secret_code)
     return false
 
   return true
