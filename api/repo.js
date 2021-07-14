@@ -16,6 +16,7 @@ const octokit = new Octokit({
 module.exports = async (req, res) => {
     res.setHeader('Access-Control-Allow-Credentials', true)
     res.setHeader('Access-Control-Allow-Origin', '*')
+    res.setHeader('Access-Control-Allow-Methods', '*')
 
     if(req.method === 'GET') {
         //Single Content
