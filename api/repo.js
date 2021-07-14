@@ -102,7 +102,7 @@ const deleteContent = async(body, method) => {
     const filename = body.filename
     const path = repo_dir + '/' + filename
 
-    const {data} = await octokit.rest.repos.deleteFile({
+    const {data, error} = await octokit.rest.repos.deleteFile({
                         owner: github_owner, 
                         repo: github_repo,
                         path: path,
@@ -110,6 +110,7 @@ const deleteContent = async(body, method) => {
                         sha: body.sha
                     })
 
+    console.log(error)
     return data
 }
 
