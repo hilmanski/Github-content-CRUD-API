@@ -36,7 +36,7 @@ module.exports = async (req, res) => {
     //Admin Middleware
     let parsedBody = undefined
     if(req.body) {
-        parsedBody = req.body
+        parsedBody = JSON.parse(req.body)
         if(verifySecretCode(parsedBody) == false)
             res.status(403).send({
                 msg: 'secret code is not provided or wrong'
