@@ -14,6 +14,12 @@ const octokit = new Octokit({
 });
 
 module.exports = async (req, res) => {
+    
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    res.setHeader('Access-Control-Allow-Credentials', true);
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, OPTIONS, DELETE');
+
     if(req.method === 'GET') {
         //Single Content
         const file = req.query.file
@@ -21,22 +27,23 @@ module.exports = async (req, res) => {
             const rawContent = await getContent('/' + file)
             const content = readBase64(rawContent.content)
             
-            return res.json({
+            return res.status(200).json({
                 body: content
             });
         }
 
         //All Content
         const files = await getContent()
-        return res.json({
+        return res.status(200).json({
             body: files
         });
     }
 
     //Admin Middleware
     let parsedBody = undefined
+    
     if(req.body) {
-        parsedBody = JSON.parse(req.body)
+        parsedBody = req.body
         if(verifySecretCode(parsedBody) == false)
            return res.status(403).send({
                 msg: 'secret code is not provided or wrong'
@@ -48,21 +55,19 @@ module.exports = async (req, res) => {
     if (req.method === 'POST' || req.method === 'OPTIONS') {
         let method = 'POST' 
         
-        console.log('parsedBody ->')
-        console.log(parsedBody)
         if (parsedBody._method !== undefined)
             method = parsedBody._method
 
         if(method === 'DELETE') {
             const data = await deleteContent(parsedBody)
-            return res.json(({
+            return res.status(200).json(({
                 body: data
             }))
         }
 
         console.log(method)
         const data = await postOrUpdateContent(parsedBody, method)
-        return res.json(({
+        return res.status(200).json(({
             body: data
         }))
     }
