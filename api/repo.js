@@ -58,6 +58,7 @@ module.exports = async (req, res) => {
             }))
         }
 
+        console.log(method)
         const data = await postOrUpdateContent(parsedBody, method)
         return res.json(({
             body: data
