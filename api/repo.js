@@ -46,7 +46,9 @@ module.exports = async (req, res) => {
     //Temp solution for CORS
         //all become POST req, with _method=REALMETHOD as params
     if(req.method === 'POST') {
-        let method = parsedBody._method ? parsedBody._method : 'POST'
+        let method = 'POST' 
+        if (parsedBody._method !== undefined)
+            method = parsedBody._method
 
         if(method === 'DELETE') {
             const data = await deleteContent(parsedBody)
