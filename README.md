@@ -24,19 +24,22 @@ GET: http://localhost:3000/api/repo
 
 GET: http://localhost:3000/api/repo?file=your-file.md  
 
+//Post New  
 POST: http://localhost:3000/api/repo  
 ```
 params: filename, content, secret_code
 ```
 
-PUT: http://localhost:3000/api/repo  
+//Update  
+POST: http://localhost:3000/api/repo  
 ```
-params: filename, content, sha(original file), secret_code
+params: filename, content, sha(original file), secret_code, _method=PUT
 ```
 
-DELETE: http://localhost:3000/api/repo  
+//Delete  
+POST: http://localhost:3000/api/repo  
 ```
-params: filename, sha(original file), secret_code
+params: filename, sha(original file), secret_code, _method=DELETE
 ```
 
 ## Todo/Plan

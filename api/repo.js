@@ -43,20 +43,24 @@ module.exports = async (req, res) => {
             })
     }
 
-    if(req.method === 'POST' || req.method === 'PUT') {
-        const data = await postOrUpdateContent(parsedBody, req.method)
-        res.json(({
-            body: data
-        }))
-    } 
+    //Temp solution for CORS
+        //all become POST req, with _method=REALMETHOD as params
+    if(req.method === 'POST') {
+        let method = parsedBody._method ? parsedBody._method : 'POST'
 
-    if(req.method === 'DELETE') {
-        const data = await deleteContent(parsedBody)
+        if(method === 'DELETE') {
+            const data = await deleteContent(parsedBody)
+            res.json(({
+                body: data
+            }))
+        }
+
+        const data = await postOrUpdateContent(parsedBody, method)
         res.json(({
             body: data
         }))
     }
-};
+}
 
 const getContent = async(filename = '') => {
   let path = repo_dir + filename
