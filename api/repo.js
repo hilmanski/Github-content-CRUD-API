@@ -48,6 +48,8 @@ module.exports = async (req, res) => {
     if (req.method === 'POST' || req.method === 'OPTIONS') {
         let method = 'POST' 
         
+        console.log('parsedBody ->')
+        console.log(parsedBody)
         if (parsedBody._method !== undefined)
             method = parsedBody._method
 
