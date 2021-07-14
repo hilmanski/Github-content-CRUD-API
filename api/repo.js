@@ -45,7 +45,7 @@ module.exports = async (req, res) => {
 
     //Temp solution for CORS
         //all become POST req, with _method=REALMETHOD as params
-    if(req.method === 'POST') {
+    if (req.method === 'POST' || req.method === 'OPTIONS') {
         let method = 'POST' 
         
         if (parsedBody._method !== undefined)
