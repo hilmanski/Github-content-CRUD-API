@@ -1,5 +1,7 @@
 ## Github Repo Content CRUD
 CRUD API for a folder's content in a github repo  
+Think of it as your barebone headless CMS
+
 Using [octokit package](https://octokit.github.io/)   
 This Nodejs Syntax using [vercel's serverless function](https://vercel.com/docs/serverless-functions/introduction)
 
